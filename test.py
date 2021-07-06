@@ -7,5 +7,3 @@ form = Form()
 form.setBackgroudColor(ColorMap.AZURE)
 form.show()
 
-item = Item()
-item.setPoint()

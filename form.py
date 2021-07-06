@@ -18,11 +18,13 @@ class Form(object):
         self.Color = Color(ColorMap.WHITE)
         self.Frame = np.ones((self.Size.getHeight(), self.Size.getWidth(), 3), dtype= np.uint8) * np.array(self.Color.getColorRGB(), np.uint8)
         self.__thread = threading.Thread(target=self.__update)
+        # context = Context(self)
     
     def __update(self):
+        context = Context(self)
         while True:
             cv2.imshow(self.Name, self.Frame)
-            time.sleep(0.01)
+            # time.sleep(0.01)
             if cv2.waitKey(40) == 27:
                 break
 
@@ -37,6 +39,7 @@ class Form(object):
 
     def setName(self, name : str):
         self.Name = name
+        cv2.namedWindow(self.Name)
     
     def setSize(self, size : Size):
         self.Size = size
@@ -72,5 +75,11 @@ class Form(object):
 
 
 class Context(object):
-    def __init__(form : Form):
+    def __init__(self, form : Form):
+        self.Frame = form.Frame
+        self.Name = form.Name
+        cv2.namedWindow(self.Name)
+        cv2.setMouseCallback(self.Name, self.__eventMouse)
+
+    def __eventMouse(self, event, x, y, flags, param):
         pass
