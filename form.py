@@ -134,4 +134,16 @@ class Context(object):
         cv2.putText(self.form.Frame, text, (x, y), lbl.Font.getFont(), lbl.Font.getSize(), lbl.Font.getColor(), 1)
 
     def __drawTextbox(self, txt : Item):
-        pass
+        text = txt.getText()
+        x, y = txt.getPoint()
+        w, h = txt.getSize()
+        color = txt.getBackColor()
+        bored = txt.getBoredColor()
+
+        x, y = int(x), int(y)
+        # draw box for text fill
+        cv2.rectangle(self.form.Frame, (x - int(w / 2), y - int(h / 2)), (x + int(w / 2), y + int(h / 2)), color, -1)
+        # ve duong vien cho textbox
+        cv2.rectangle(self.form.Frame, (x - int(w / 2), y - int(h / 2)), (x + int(w / 2), y + int(h / 2)), bored, 1)
+        # fill text for textbox
+        cv2.putText(self.form.Frame, text, ((x - int(w / 2)) + 10, (y - int(h / 2)) + 20), txt.Font.getFont(), txt.Font.getSize(), txt.Font.getColor(), 1)

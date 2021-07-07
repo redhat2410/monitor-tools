@@ -1,3 +1,4 @@
+from textbox import TextBox
 from label import Label
 import time
 from form import FontStyle, Form, Size, Font, Color, ColorMap
@@ -28,7 +29,7 @@ button = Button()
 button.Text = 'Click1'
 size = Size(70, 30)
 point = Point(40, 40)
-font = Font(FontStyle.FONT_HERSHEY_PLAIN, 1, ColorMap.BLACK)
+font = Font(FontStyle.FONT_HERSHEY_PLAIN, 1, ColorMap.WHITESMOKE)
 
 button.Size = size
 button.Point = point
@@ -41,9 +42,23 @@ form.Add(button)
 label = Label()
 label.Text = "Hello World"
 point = Point(100, 50)
-font = Font(FontStyle.FONT_HERSHEY_DUPLEX, 1, ColorMap.BLACK)
+font = Font(FontStyle.FONT_HERSHEY_PLAIN, 1, ColorMap.BLACK)
 
 label.Point = point
 label.Font = font
 
 form.Add(label)
+
+
+textbox = TextBox()
+point = Point(300, 50)
+size = Size(150, 30)
+font = Font(FontStyle.FONT_HERSHEY_PLAIN, 1, ColorMap.BLACK)
+
+textbox.Point = point
+textbox.Size = size
+textbox.Font = font
+textbox.BackColor = Color(ColorMap.WHITESMOKE)
+textbox.BoredColor = Color(ColorMap.BLACK)
+
+form.Add(textbox)
