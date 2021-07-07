@@ -20,4 +20,4 @@ class Size(object):
         self.height = height
 
     def getSize(self):
-        return self.width, self.height
+        return (self.width, self.height)

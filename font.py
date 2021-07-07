@@ -15,15 +15,15 @@ class FontStyle(Enum):
 
 
 class Font(object):
-    def __init__(self, style : FontStyle = FontStyle.FONT_HERSHEY_SIMPLEX, size : int = 1, color : ColorMap = ColorMap.BLACK):
+    def __init__(self, style : FontStyle = FontStyle.FONT_HERSHEY_SIMPLEX, size : float = 1, color : ColorMap = ColorMap.BLACK):
         self.style  = style
         self.size   = size
-        self.color  = color
+        self.color  = Color(color)
 
     def setFont(self, style : FontStyle):
         self.style  = style
 
-    def setSize(self, size : int):
+    def setSize(self, size : float):
         self.size = size
 
     def setFontColor(self, color : Color):
@@ -39,4 +39,4 @@ class Font(object):
         return self.size
 
     def getColor(self):
-        return self.color 
+        return self.color.getColorRGB()

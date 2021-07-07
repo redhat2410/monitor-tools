@@ -1,8 +1,12 @@
 from point import Point
-import cv2
 from font import Font, FontStyle
 from size import Size
 from color import Color, ColorMap
+
+DEFAULT =   0
+BUTTON  =   1
+LABEL   =   2
+TEXTBOX =   3
 
 class Item(object):
     def __init__(self, name : str = 'Item'):
@@ -10,8 +14,12 @@ class Item(object):
         self.Text = ""
         self.Point = Point()
         self.Size = Size()
+        self.Font = Font()
         self.BackColor = Color(ColorMap.WHITESMOKE)
-        self.ForeColor = Color(ColorMap.BLACK)
+        self.BoredColor = Color(ColorMap.WHITESMOKE)
+        # thuộc tính id dùng để phân loại item là button, label, textbox ...
+        # item : 1, 2, 3, ...
+        self._id    = DEFAULT
 
     def setName(self, name : str):
         self.Name = name
@@ -31,6 +39,9 @@ class Item(object):
     def setForeColor(self, color : ColorMap):
         self.ForeColor = Color(color)
 
+    def setFont(self, font : Font):
+        self.Font = font
+
     def getName(self):
         return self.Name
     
@@ -46,5 +57,5 @@ class Item(object):
     def getBackColor(self):
         return self.BackColor.getColorRGB()
 
-    def getForeColor(self):
-        return self.ForeColor.getColorRGB()
+    def getBoredColor(self):
+        return self.BoredColor.getColorRGB()

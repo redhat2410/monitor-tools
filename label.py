@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import item
 from item import Item
 
 class Label(Item):
@@ -8,6 +9,7 @@ class Label(Item):
         self.Text       = 'label'
         self.Enable     = True
         self.Visible    = True
+        self._id        = item.LABEL
     
     def handle_click(self, pointer):
         pointer(self)

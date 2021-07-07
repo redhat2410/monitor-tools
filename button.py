@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
-from item import Item, FontStyle, Font, ColorMap, Color, Size, Point
+import item
+from item import Item
 
 
 class Button(Item):
@@ -9,6 +10,7 @@ class Button(Item):
         self.Text       = 'button'
         self.Enable     = True
         self.Visible    = True
+        self._id        = item.BUTTON
     
     def handle_click(self, pointer):
         pointer()

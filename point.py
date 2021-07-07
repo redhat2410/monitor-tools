@@ -8,7 +8,7 @@ class Point(object):
         self.y = y
 
     def getPoint(self):
-        return self.x, self.y
+        return (self.x, self.y)
 
     def setX(self, x : int):
         self.x = x
