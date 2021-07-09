@@ -10,17 +10,29 @@ from point import Point
 from size import Size
 from item import Item
 
+class EventType(Enum):
+    NO_EVENT                = 0
+    EVENT_SINGLE_CLICK      = 1
+    EVENT_DOUBLE_CLICK      = 2
+    EVENT_RIGHT_MOUSE       = 3
+    EVENT_TEXT_CHANGE       = 4
+    EVENT_LMOUSE_UP         = 5
+    EVENT_LMOUSE_DOWN       = 6
+    EVENT_RMOUSE_UP         = 7
+    EVENT_RMOUSE_DOWN       = 8
 
 class Form(object):
     def __init__(self):
-        # init array image for opencv
+        # khợi tạo các đối tượng thuộc tính của form
         self.Name = 'Form'
         self.items = list()
         self.Size = Size(600, 400)
         self.Font = Font()
         self.Color = Color(ColorMap.WHITE)
         self.Frame = np.ones((self.Size.getHeight(), self.Size.getWidth(), 3), dtype= np.uint8) * np.array(self.Color.getColorRGB(), np.uint8)
+        # tạo luồng xử lý các cập nhật giao của form
         self.__thread = threading.Thread(target=self.__update)
+        # khởi tạo môi trường cho update giao diện cho form
         self.__context = Context(self)
     
     def __update(self):
@@ -82,16 +94,28 @@ class Form(object):
 
 class Context(object):
     def __init__(self, form : Form):
+        # khởi tạo form thừ tham số truyền
         self.form = form
+        # khởi tạo các thuộc tính quản lý sự kiện
+        self.__previous_event   = EventType.NO_EVENT
+        self.__current_event    = EventType.NO_EVENT
+        self.__timeout_click    = 0
 
     def eventUpdate(self):
         cv2.namedWindow(self.form.Name)
         cv2.setMouseCallback(self.form.Name, self.__eventMouse)
 
     def __eventMouse(self, event, x, y, flags, param):
-        # if event == cv2.EVENT_LBUTTONDOWN:
-        #     cv2.circle(self.form.Frame, (x, y), 3, (0, 0, 255), -1)
-        pass
+        retrclick = self.__rightclick(event)
+        retdclick = self.__doubleclink(event)
+
+        if retdclick != EventType.NO_EVENT:
+            print(retdclick.name)
+            self.__ofObject(x, y)
+
+        if retrclick != EventType.NO_EVENT:
+            print(retrclick.name)
+            self.__ofObject(x, y)
 
     def updateFrame(self):
         self.__createItems()
@@ -147,3 +171,56 @@ class Context(object):
         cv2.rectangle(self.form.Frame, (x - int(w / 2), y - int(h / 2)), (x + int(w / 2), y + int(h / 2)), bored, 1)
         # fill text for textbox
         cv2.putText(self.form.Frame, text, ((x - int(w / 2)) + 10, (y - int(h / 2)) + 20), txt.Font.getFont(), txt.Font.getSize(), txt.Font.getColor(), 1)
+
+    def __evenMouseManager(self, event : int):
+        pass
+
+    def __click(self, event : int):
+        if event == cv2.EVENT_LBUTTONDOWN:
+            self.__current_event = EventType.EVENT_LMOUSE_DOWN
+        elif event == cv2.EVENT_LBUTTONUP and self.__current_event == EventType.EVENT_LMOUSE_DOWN:
+            self.__current_event = EventType.NO_EVENT
+            return EventType.EVENT_SINGLE_CLICK
+
+        return EventType.NO_EVENT
+    def __doubleclink(self, event : int):
+        '''
+        sự kiện double click là tổ hợp của 2 sử kiện click trong khoảng thời gian ngắn tạo nên
+        để phát hiện sự kiện double click cần phải chờ phat hiện 2 sự kiện click trong thời gian
+        ngắn
+        '''
+        if self.__click(event) == EventType.EVENT_SINGLE_CLICK and self.__timeout_click == 0:
+            self.__timeout_click = time.perf_counter() * 1000
+            return EventType.EVENT_SINGLE_CLICK
+        elif self.__timeout_click != 0:
+            # kiểm tra thời gian trong 2 lần click phải nhỏ hơn 100 ms thì sẽ chấp nhận sự kiện double click
+            if ((time.perf_counter() * 1000) - self.__timeout_click) < 100:
+                # reset lại biến timeout
+                self.__timeout_click = 0
+                return EventType.EVENT_DOUBLE_CLICK
+            else:
+                self.__timeout_click = 0
+        else:
+            pass
+
+        return EventType.NO_EVENT
+
+    def __rightclick(self, event : int):
+        if event == cv2.EVENT_RBUTTONDOWN:
+            self.__current_event = EventType.EVENT_RMOUSE_DOWN
+        elif event == cv2.EVENT_RBUTTONUP and self.__current_event == EventType.EVENT_RMOUSE_DOWN:
+            self.__current_event = EventType.NO_EVENT
+            return EventType.EVENT_RIGHT_MOUSE
+
+        return EventType.NO_EVENT
+
+    def __ofObject(self, _x : int , _y : int):
+        for obj in self.form.items:
+            # lấy thông tin của đối tượng gồm vị trí và kích thước
+            x, y    = obj.getPoint()
+            w, h    = obj.getSize()
+            
+            # thực hiện kiểm tra tọa độ (x, y) thuộc đối tượng nào 
+            if ((_x > x) and (_x < (x + w))) and ((_y > y) and (_y < (y + h))):
+                print('of ', obj._id)
+                return
